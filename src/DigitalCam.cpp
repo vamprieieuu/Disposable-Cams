@@ -182,8 +182,6 @@ static PF_Err About(
 static PF_Err GlobalSetup(
     PF_OutData      *out_data)
 {
-    CameraProfileManager::EnsureInitialized();
-
     out_data->my_version = PF_VERSION(
         MAJOR_VERSION,
         MINOR_VERSION,
@@ -191,9 +189,6 @@ static PF_Err GlobalSetup(
         STAGE_VERSION,
         BUILD_VERSION);
 
-
-
-    out_data->num_params = DIGITALCAM_NUM_PARAMS;
 
     out_data->out_flags =
         PF_OutFlag_PIX_INDEPENDENT |
