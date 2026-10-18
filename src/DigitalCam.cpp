@@ -216,87 +216,83 @@ static PF_Err ParamsSetup(
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_POPUP(
-        "Camera Model",
-        23,
+        "Camera Engine",
+        19,
         1,
-        "Panasonic Lumix TZ7|"
-        "Sony Cyber-shot DSC-W180|"
-        "Sony Cyber-shot H7 / H9|"
-        "Sony Handycam Family|"
-        "Canon PowerShot A-Series|"
-        "Canon AE-1 (Photochemical Film)|"
-        "Sony NEX-5|"
-        "Canon EOS 400D / Rebel XTi|"
-        "Sony a6000|"
-        "Sony DSC-T70|"
-        "Kodak PIXPRO FZ55|"
-        "Olympus mju 5000|"
-        "Wizen Excel-2 (Photochemical Film)|"
-        "Nokia 7610|"
-        "Nokia N73|"
-        "Nokia N82|"
-        "Nokia N95|"
-        "Nokia N93|"
-        "Nokia N86 8MP|"
-        "Nokia N8|"
-        "Nokia 808 PureView|"
-        "Sony Ericsson K750i|"
-        "Sony Ericsson K800i",
+        "CPM35 — Disposable Film|"
+        "Classic U — Compact Film|"
+        "IR — Infrared Response|"
+        "FQS — Flash Quick Snapshot|"
+        "CCD R — CCD Color Response|"
+        "FXN — Flash X-Negative|"
+        "DHalf — Half-Frame Film|"
+        "Pocket CCD 01 — IMG_3792|"
+        "Pocket CCD 02 — IMG_3793|"
+        "Pocket CCD 03 — IMG_3794|"
+        "Pocket CCD 04 — IMG_3795 DNG|"
+        "Pocket CCD 05 — IMG_3797|"
+        "Pocket CCD 06 — IMG_3798|"
+        "Pocket CCD 07 — IMG_3799|"
+        "Pocket CCD 08 — IMG_3802 DNG|"
+        "Pocket CCD 09 — IMG_3804|"
+        "Pocket CCD 10 — IMG_3808|"
+        "Pocket CCD 11 — IMG_3809 DNG|"
+        "Pocket CCD 12 — IMG_3813",
         PARAM_CAMERA_MODEL);
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_POPUP(
-        "Native Camera Effects",
-        18,
+        "Color Rendering",
+        8,
         1,
-        "None|Standard|Vivid|Natural|Portrait|Landscape|Sunset|Neutral|Faithful|Monochrome|B&W|Sepia|Negative|Solarize|Clear|Deep|Light|Positive Film",
+        "Engine Default|Soft Highlight Roll-Off|Hard Direct Flash|Warm Film Bias|Cool CCD Bias|Low-Saturation Matte|High-Saturation Compact|Monochrome Film",
         PARAM_NATIVE_EFFECT);
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_POPUP(
-        "In-Camera Mode",
-        8,
+        "Capture Conditions",
+        5,
         1,
-        "Standard / Auto|Macro / Close-Up|Night Portrait|Scenery / Landscape|Sports / Action|Party / Indoor|Sunset / Twilight|High Sensitivity (High ISO)",
+        "Neutral / Available Light|Direct Flash|Warm Indoor Light|Low-Light Snapshot|Bright Daylight",
         PARAM_CAMERA_MODE);
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_POPUP(
-        "Flash Strobe Simulation",
+        "Flash Behavior",
         4,
         1,
-        "Off|Auto Flash Simulation|Forced Flash Strobe|Slow Synchro Flash",
+        "Disabled|Automatic Snapshot Flash|Forced Direct Flash|Slow-Sync Flash",
         PARAM_FLASH_MODE);
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_CHECKBOX(
-        "Lens Optics & CA",
-        "Enable Vignette & Optics",
+        "Lens Character",
+        "Enable Lens Falloff & Optical Character",
         TRUE,
         0,
         PARAM_LENS_OPTICS);
 
     AEFX_CLR_STRUCT(def);
     def.flags = PF_ParamFlag_START_COLLAPSED;
-    PF_ADD_TOPIC("Procedural Grain Engine", PARAM_GRAIN_TOPIC_START);
+    PF_ADD_TOPIC("Film & Sensor Grain", PARAM_GRAIN_TOPIC_START);
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Grain Amount",
+        "Grain Strength",
         0.0f, 100.0f, 0.0f, 100.0f, 25.0f,
         PF_Precision_TENTHS, 0, 0,
         PARAM_GRAIN_AMOUNT);
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Grain Size",
+        "Grain Scale",
         0.5f, 4.0f, 0.5f, 4.0f, 1.0f,
         PF_Precision_HUNDREDTHS, 0, 0,
         PARAM_GRAIN_SIZE);
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Clumping / Aggregation",
+        "Grain Clumping",
         0.0f, 100.0f, 0.0f, 100.0f, 35.0f,
         PF_Precision_TENTHS, 0, 0,
         PARAM_GRAIN_CLUMPING);
@@ -340,7 +336,7 @@ static PF_Err ParamsSetup(
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Temporal Speed",
+        "Grain Motion Speed",
         0.0f, 5.0f, 0.0f, 5.0f, 1.0f,
         PF_Precision_HUNDREDTHS, 0, 0,
         PARAM_TEMPORAL_SPEED);
@@ -356,7 +352,7 @@ static PF_Err ParamsSetup(
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Blend With Original",
+        "Original Mix",
         0.0f, 100.0f, 0.0f, 100.0f, 0.0f,
         PF_Precision_TENTHS, 0, 0,
         PARAM_BLEND_ORIGINAL);

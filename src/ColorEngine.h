@@ -319,6 +319,61 @@ inline void ProcessPixel(
     g = Clamp01(luma + (g - luma) * profile.saturation);
     b = Clamp01(luma + (b - luma) * profile.saturation);
 
+    // 5b. Camera-engine response stage.
+    // These are independent response families, not UI presets: each family
+    // changes the luminance shoulder/toe and channel coupling before JPEG/NR.
+    // The profile coefficients above remain the reference-specific calibration.
+    {
+        const float y = 0.299f * r + 0.587f * g + 0.114f * b;
+        float target_y = y;
+        float mix = 0.0f;
+        switch (profile.id) {
+            case 1: // CPM35: disposable negative, lifted toe and warm shoulder
+                target_y = y * (0.91f + 0.18f * (1.0f - y));
+                mix = 0.42f; r *= 1.025f; b *= 0.965f; break;
+            case 2: // Classic U: gentler contrast and softer highlight knee
+                target_y = y > 0.68f ? 0.68f + 0.32f * (1.0f - std::exp(-(y - 0.68f) / 0.32f)) : y;
+                mix = 0.30f; break;
+            case 3: // IR: false-colour response, red channel drives luminance
+                target_y = 0.36f * r + 0.48f * g + 0.16f * b;
+                mix = 0.58f; r = 0.72f * r + 0.28f * (1.0f - b); b = 0.68f * b + 0.32f * r; break;
+            case 4: // FQS: hard direct-flash response
+                target_y = (y - 0.5f) * 1.20f + 0.5f;
+                mix = 0.24f; break;
+            case 5: // CCD R: early CCD saturation and clipped highlights
+                target_y = y > 0.82f ? 0.82f + (y - 0.82f) * 0.42f : y;
+                mix = 0.36f; r *= 1.025f; b *= 0.97f; break;
+            case 6: // FXN: cool, denser shadow response
+                target_y = y * (0.82f + 0.18f * y);
+                mix = 0.34f; b *= 1.035f; break;
+            case 7: // DHalf: filmic midtone compression
+                target_y = y / (0.88f + 0.24f * y);
+                mix = 0.38f; break;
+            default: {
+                // Twelve pocket-CCD references get distinct response knees.
+                const int k = profile.id - 8;
+                const float knee = 0.62f + 0.025f * static_cast<float>(k % 7);
+                const float shoulder = 0.24f + 0.035f * static_cast<float>(k % 5);
+                if (y > knee) {
+                    const float d = y - knee;
+                    target_y = knee + d / (1.0f + d / shoulder);
+                } else {
+                    const float toe = 0.015f * static_cast<float>(k % 4);
+                    target_y = y + toe * (1.0f - y) * (1.0f - y);
+                }
+                mix = 0.18f + 0.035f * static_cast<float>(k % 6);
+                if ((k % 3) == 0) { r *= 1.018f; b *= 0.982f; }
+                else if ((k % 3) == 1) { r *= 0.985f; b *= 1.025f; }
+                else { g *= 1.012f; }
+                break;
+            }
+        }
+        const float delta_y = target_y - y;
+        r = Clamp01(r + delta_y * mix);
+        g = Clamp01(g + delta_y * mix);
+        b = Clamp01(b + delta_y * mix);
+    }
+
     // 6. Camera-specific NR / JPEG quantization approximation
     if (profile.has_watercolor_nr || profile.nr_smear > 0.25f) {
         float q_steps = 48.0f * (1.0f - profile.nr_smear * 0.5f);

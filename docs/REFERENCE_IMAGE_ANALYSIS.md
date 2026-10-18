@@ -1,14 +1,17 @@
-# Quantitative reference-image pass
+# Reference image analysis — Disposable Cams
 
-The supplied 13 JPGs were batch-inspected for dimensions, mean RGB, RGB standard deviation, luminance percentiles and mean saturation. These numbers are calibration clues only; without knowing which camera produced which image, they must not be treated as per-camera coefficients.
+## Scope and naming
 
-Notable clusters:
-- IMG_3508 and IMG_3510 are strongly warm/high-saturation indoor frames.
-- IMG_3504/3505/3511/3515 show strong flash/party-like contrast.
-- IMG_3503 and IMG_3506 are darker low-light references with cooler/greenish behavior.
-- IMG_3513 is a cool, low-saturation daylight/beach reference.
-- IMG_3514 is a greener outdoor reference.
-- IMG_3509 contains a very bright scene and camera/date overlay behavior worth excluding from color-stat calibration.
-- IMG_3512 is a larger-resolution indoor/flash frame.
+The supplied archive contains 19 camera-look references plus `NORMAL.jpeg` as the neutral comparison. The visible names CPM35, Classic U, IR, FQS, CCD R, FXN and DHalf are preserved. The remaining images are referenced by filename because the source images do not establish their exact camera models.
 
-See `REFERENCE_IMAGE_ANALYSIS.json` for the raw measurements.
+## What can be inferred visually
+
+The set depicts a consistent portrait subject, which is useful for comparing render responses. The important comparison axes are: skin hue and saturation; neutral-wall color cast; shadow density; direct-flash hardness and falloff; highlight clipping/roll-off; edge contrast and apparent sharpening; chroma noise; and vignette/optical falloff. These axes should be evaluated against NORMAL, not against unrelated photographs.
+
+## Limits
+
+A reference JPEG/DNG is an output sample, not the original camera pipeline. The exact sensor, lens, film stock, processing recipe and app implementation cannot be proven from these files alone. Therefore IMG_* labels remain filename-based and the profile coefficients are hand-authored approximations. DNG files require a raw-capable decoder for complete sensor-level analysis; they should not be treated as equivalent to JPEGs without raw development.
+
+## Implementation map
+
+`CameraProfiles.cpp` holds the per-engine response values. `ColorEngine.h` applies the color/tonal response and optical characteristics. `NoiseEngine.h` provides the grain/noise functions. `DigitalCam.cpp` defines the native AE UI and render entry points. The Windows GitHub Actions workflow remains the required build verification step.
