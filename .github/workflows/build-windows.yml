@@ -1,0 +1,31 @@
+name: Build Disposable Cams
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check SDK
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "extern/AfterEffectsSDK/Examples/Headers/AEConfig.h")) {
+            Write-Error "After Effects SDK is not present. For a private build, add the SDK at extern/AfterEffectsSDK."
+          }
+      - name: Configure
+        shell: pwsh
+        run: >
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+          -DAFTEREFFECTS_SDK="$PWD/extern/AfterEffectsSDK"
+      - name: Build
+        shell: pwsh
+        run: cmake --build build --config Release --parallel
+      - name: Upload AEX
+        uses: actions/upload-artifact@v4
+        with:
+          name: DISPOSABLE-CAMS-aex
+          path: build/Release/Disposable Cams.aex

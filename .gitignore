@@ -1,0 +1,9 @@
+build/
+.vs/
+*.user
+*.suo
+*.rr
+*.rrc
+*.rc
+*.res
+
