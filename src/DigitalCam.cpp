@@ -192,52 +192,6 @@ static PF_Err GlobalSetup(
         BUILD_VERSION);
 
 
-    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Color Mixer (HSL)", PARAM_HSL_TOPIC_START);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_RED);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_RED);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_RED);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_ORANGE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_ORANGE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_ORANGE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_YELLOW);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_YELLOW);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_YELLOW);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_GREEN);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_GREEN);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_GREEN);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_AQUA);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_AQUA);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_AQUA);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_BLUE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_BLUE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_BLUE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_PURPLE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_PURPLE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_PURPLE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_MAGENTA);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_MAGENTA);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_MAGENTA);
-    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_HSL_TOPIC_END);
-    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Tone Curves", PARAM_CURVE_TOPIC_START);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Master Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_RGB);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_RED);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_GREEN);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_BLUE);
-    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_CURVE_TOPIC_END);
-    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Color Grading", PARAM_GRADE_TOPIC_START);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Shadow Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHADOW_HUE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Shadow Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHADOW_SAT);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Midtone Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_MID_HUE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Midtone Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_MID_SAT);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Highlight Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_HIGHLIGHT_HUE);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Highlight Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_HIGHLIGHT_SAT);
-    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_GRADE_TOPIC_END);
-    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Detail & Noise Reduction", PARAM_DETAIL_TOPIC_START);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Sharpening", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHARPENING);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Sharpen Radius", 1, 5, 1, 5, 1, PF_Precision_TENTHS, 0, 0, PARAM_SHARPEN_RADIUS);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Luminance Noise Reduction", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_NOISE_REDUCTION);
-    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Color Noise Reduction", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_COLOR_NOISE_REDUCTION);
-    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_DETAIL_TOPIC_END);
 
     out_data->num_params = DIGITALCAM_NUM_PARAMS;
 
@@ -482,6 +436,54 @@ static PF_Err ParamsSetup(
         "Develop Vignette", 0.0f, 100.0f, 0.0f, 100.0f, 0.0f,
         PF_Precision_TENTHS, 0, 0,
         PARAM_VIGNETTE);
+
+
+    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Color Mixer (HSL)", PARAM_HSL_TOPIC_START);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_RED);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_RED);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_RED);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_ORANGE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_ORANGE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_ORANGE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_YELLOW);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_YELLOW);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_YELLOW);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_GREEN);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_GREEN);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_GREEN);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_AQUA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_AQUA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_AQUA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_BLUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_BLUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_BLUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_PURPLE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_PURPLE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_PURPLE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_MAGENTA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_MAGENTA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_MAGENTA);
+    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_HSL_TOPIC_END);
+    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Tone Curves", PARAM_CURVE_TOPIC_START);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Master Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_RGB);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_RED);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_GREEN);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_BLUE);
+    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_CURVE_TOPIC_END);
+    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Color Grading", PARAM_GRADE_TOPIC_START);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Shadow Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHADOW_HUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Shadow Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHADOW_SAT);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Midtone Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_MID_HUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Midtone Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_MID_SAT);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Highlight Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_HIGHLIGHT_HUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Highlight Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_HIGHLIGHT_SAT);
+    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_GRADE_TOPIC_END);
+    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Detail & Noise Reduction", PARAM_DETAIL_TOPIC_START);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Sharpening", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHARPENING);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Sharpen Radius", 1, 5, 1, 5, 1, PF_Precision_TENTHS, 0, 0, PARAM_SHARPEN_RADIUS);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Luminance Noise Reduction", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_NOISE_REDUCTION);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Color Noise Reduction", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_COLOR_NOISE_REDUCTION);
+    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_DETAIL_TOPIC_END);
 
     out_data->num_params = DIGITALCAM_NUM_PARAMS;
     return err;
