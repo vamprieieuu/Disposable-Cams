@@ -318,6 +318,14 @@ static PF_Err ParamsSetup(
         PARAM_MANUAL_COLOR);
 
     AEFX_CLR_STRUCT(def);
+    PF_ADD_CHECKBOX(
+        "Blend Colors From Image",
+        "Tint chroma grain using colors found in the source image",
+        FALSE,
+        0,
+        PARAM_BLEND_GRAIN_SOURCE);
+
+    AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
         "Grain Contrast",
         0.0f, 100.0f, 0.0f, 100.0f, 50.0f,
@@ -349,14 +357,14 @@ static PF_Err ParamsSetup(
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Original Mix",
-        0.0f, 100.0f, 0.0f, 100.0f, 0.0f,
+        "Original Mix (negative boosts camera effect)",
+        -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
         PF_Precision_TENTHS, 0, 0,
         PARAM_BLEND_ORIGINAL);
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Exposure", -5.0f, 5.0f, -5.0f, 5.0f, 0.0f,
+        "Exposure", -10.0f, 10.0f, -10.0f, 10.0f, 0.0f,
         PF_Precision_TENTHS, 0, 0,
         PARAM_EXPOSURE);
 
@@ -579,7 +587,7 @@ static PF_Err SmartRender(
 
     if (!err && input_worldP && output_worldP && input_worldP->data && output_worldP->data) {
         PF_ParamDef p_model, p_effect, p_mode, p_flash, p_optics;
-        PF_ParamDef p_g_amt, p_g_size, p_g_clump, p_c_grain, p_g_chroma, p_m_col, p_g_cont, p_g_dens, p_t_speed, p_seed, p_blend;
+        PF_ParamDef p_g_amt, p_g_size, p_g_clump, p_c_grain, p_g_chroma, p_m_col, p_blend_grain_source, p_g_cont, p_g_dens, p_t_speed, p_seed, p_blend;
         PF_ParamDef p_develop[13];
         const int develop_ids[13] = { PARAM_EXPOSURE, PARAM_CONTRAST, PARAM_HIGHLIGHTS, PARAM_SHADOWS, PARAM_WHITES, PARAM_BLACKS, PARAM_TEMPERATURE, PARAM_TINT, PARAM_VIBRANCE, PARAM_SATURATION, PARAM_CLARITY, PARAM_DEHAZE, PARAM_VIGNETTE };
         for (int i = 0; i < 13; ++i) AEFX_CLR_STRUCT(p_develop[i]);
@@ -595,6 +603,7 @@ static PF_Err SmartRender(
         AEFX_CLR_STRUCT(p_c_grain);
         AEFX_CLR_STRUCT(p_g_chroma);
         AEFX_CLR_STRUCT(p_m_col);
+        AEFX_CLR_STRUCT(p_blend_grain_source);
         AEFX_CLR_STRUCT(p_g_cont);
         AEFX_CLR_STRUCT(p_g_dens);
         AEFX_CLR_STRUCT(p_t_speed);
@@ -612,15 +621,16 @@ static PF_Err SmartRender(
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_COLORED_GRAIN, in_data->current_time, in_data->time_step, in_data->time_scale, &p_c_grain));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_CHROMA_GRAIN, in_data->current_time, in_data->time_step, in_data->time_scale, &p_g_chroma));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_MANUAL_COLOR, in_data->current_time, in_data->time_step, in_data->time_scale, &p_m_col));
+        ERR(PF_CHECKOUT_PARAM(in_data, PARAM_BLEND_GRAIN_SOURCE, in_data->current_time, in_data->time_step, in_data->time_scale, &p_blend_grain_source));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_GRAIN_CONTRAST, in_data->current_time, in_data->time_step, in_data->time_scale, &p_g_cont));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_GRAIN_DENSITY, in_data->current_time, in_data->time_step, in_data->time_scale, &p_g_dens));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_TEMPORAL_SPEED, in_data->current_time, in_data->time_step, in_data->time_scale, &p_t_speed));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_RANDOM_SEED, in_data->current_time, in_data->time_step, in_data->time_scale, &p_seed));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_BLEND_ORIGINAL, in_data->current_time, in_data->time_step, in_data->time_scale, &p_blend));
         for (int i = 0; i < 13; ++i) ERR(PF_CHECKOUT_PARAM(in_data, develop_ids[i], in_data->current_time, in_data->time_step, in_data->time_scale, &p_develop[i]));
-        const int extra_ids[38] = {PARAM_HUE_RED, PARAM_SAT_RED, PARAM_LUM_RED, PARAM_HUE_ORANGE, PARAM_SAT_ORANGE, PARAM_LUM_ORANGE, PARAM_HUE_YELLOW, PARAM_SAT_YELLOW, PARAM_LUM_YELLOW, PARAM_HUE_GREEN, PARAM_SAT_GREEN, PARAM_LUM_GREEN, PARAM_HUE_AQUA, PARAM_SAT_AQUA, PARAM_LUM_AQUA, PARAM_HUE_BLUE, PARAM_SAT_BLUE, PARAM_LUM_BLUE, PARAM_HUE_PURPLE, PARAM_SAT_PURPLE, PARAM_LUM_PURPLE, PARAM_HUE_MAGENTA, PARAM_SAT_MAGENTA, PARAM_LUM_MAGENTA, PARAM_CURVE_RGB, PARAM_CURVE_RED, PARAM_CURVE_GREEN, PARAM_CURVE_BLUE, PARAM_SHADOW_HUE, PARAM_SHADOW_SAT, PARAM_MID_HUE, PARAM_MID_SAT, PARAM_HIGHLIGHT_HUE, PARAM_HIGHLIGHT_SAT, PARAM_SHARPENING, PARAM_SHARPEN_RADIUS, PARAM_NOISE_REDUCTION, PARAM_COLOR_NOISE_REDUCTION};
-        PF_ParamDef p_extra[38]; for (int i=0;i<38;++i) AEFX_CLR_STRUCT(p_extra[i]);
-        for (int i=0;i<38;++i) ERR(PF_CHECKOUT_PARAM(in_data, extra_ids[i], in_data->current_time, in_data->time_step, in_data->time_scale, &p_extra[i]));
+        const int extra_ids[39] = {PARAM_HUE_RED, PARAM_SAT_RED, PARAM_LUM_RED, PARAM_HUE_ORANGE, PARAM_SAT_ORANGE, PARAM_LUM_ORANGE, PARAM_HUE_YELLOW, PARAM_SAT_YELLOW, PARAM_LUM_YELLOW, PARAM_HUE_GREEN, PARAM_SAT_GREEN, PARAM_LUM_GREEN, PARAM_HUE_AQUA, PARAM_SAT_AQUA, PARAM_LUM_AQUA, PARAM_HUE_BLUE, PARAM_SAT_BLUE, PARAM_LUM_BLUE, PARAM_HUE_PURPLE, PARAM_SAT_PURPLE, PARAM_LUM_PURPLE, PARAM_HUE_MAGENTA, PARAM_SAT_MAGENTA, PARAM_LUM_MAGENTA, PARAM_CURVE_RGB, PARAM_CURVE_RED, PARAM_CURVE_GREEN, PARAM_CURVE_BLUE, PARAM_SHADOW_HUE, PARAM_SHADOW_SAT, PARAM_MID_HUE, PARAM_MID_SAT, PARAM_HIGHLIGHT_HUE, PARAM_HIGHLIGHT_SAT, PARAM_SHARPENING, PARAM_SHARPEN_RADIUS, PARAM_NOISE_REDUCTION, PARAM_COLOR_NOISE_REDUCTION, PARAM_GRADE_BALANCE};
+        PF_ParamDef p_extra[39]; for (int i=0;i<39;++i) AEFX_CLR_STRUCT(p_extra[i]);
+        for (int i=0;i<39;++i) ERR(PF_CHECKOUT_PARAM(in_data, extra_ids[i], in_data->current_time, in_data->time_step, in_data->time_scale, &p_extra[i]));
 
         if (!err) {
             RenderPayload payload{};
@@ -634,6 +644,7 @@ static PF_Err SmartRender(
             payload.grain_size     = static_cast<float>(p_g_size.u.fs_d.value);
             payload.grain_clumping = static_cast<float>(p_g_clump.u.fs_d.value) * 0.01f;
             payload.colored_grain  = (p_c_grain.u.bd.value != 0);
+            payload.blend_grain_source = (p_blend_grain_source.u.bd.value != 0);
             payload.chroma_grain   = payload.colored_grain
                 ? std::max(0.0f, static_cast<float>(p_g_chroma.u.fs_d.value) * 0.01f)
                 : 0.0f;
@@ -680,6 +691,7 @@ static PF_Err SmartRender(
             payload.sharpen_radius = static_cast<float>(p_extra[35].u.fs_d.value);
             payload.noise_reduction = static_cast<float>(p_extra[36].u.fs_d.value) * 0.01f;
             payload.color_noise_reduction = static_cast<float>(p_extra[37].u.fs_d.value) * 0.01f;
+            payload.grade_balance = static_cast<float>(p_extra[38].u.fs_d.value) * 0.01f;
             payload.time_sec       = (in_data->time_scale > 0)
                 ? (static_cast<float>(in_data->current_time) / static_cast<float>(in_data->time_scale))
                 : 0.0f;
@@ -712,12 +724,14 @@ static PF_Err SmartRender(
         ERR2(PF_CHECKIN_PARAM(in_data, &p_c_grain));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_g_chroma));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_m_col));
+        ERR2(PF_CHECKIN_PARAM(in_data, &p_blend_grain_source));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_g_cont));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_g_dens));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_t_speed));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_seed));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_blend));
         for (int i = 0; i < 13; ++i) ERR2(PF_CHECKIN_PARAM(in_data, &p_develop[i]));
+        for (int i = 0; i < 39; ++i) ERR2(PF_CHECKIN_PARAM(in_data, &p_extra[i]));
     }
 
     ERR2(extra->cb->checkin_layer_pixels(in_data->effect_ref, PARAM_INPUT));
@@ -750,6 +764,7 @@ static PF_Err LegacyRender(
     payload.grain_size     = static_cast<float>(params[PARAM_GRAIN_SIZE]->u.fs_d.value);
     payload.grain_clumping = static_cast<float>(params[PARAM_GRAIN_CLUMPING]->u.fs_d.value) * 0.01f;
     payload.colored_grain  = (params[PARAM_COLORED_GRAIN]->u.bd.value != 0);
+    payload.blend_grain_source = (params[PARAM_BLEND_GRAIN_SOURCE]->u.bd.value != 0);
     payload.chroma_grain   = payload.colored_grain
         ? std::max(0.0f, static_cast<float>(params[PARAM_CHROMA_GRAIN]->u.fs_d.value) * 0.01f)
         : 0.0f;

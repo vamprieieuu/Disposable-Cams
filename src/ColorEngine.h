@@ -21,6 +21,7 @@ struct RenderPayload {
     float grain_density;
     float temporal_speed;
     bool colored_grain;
+    bool blend_grain_source;
     float manual_r;
     float manual_g;
     float manual_b;
@@ -330,14 +331,16 @@ inline void ProcessPixel(
     g = std::pow(Clamp01(g), inv_gamma);
     b = std::pow(Clamp01(b), inv_gamma);
 
-    r = Clamp01((r - 0.5f) * profile.contrast + 0.5f);
-    g = Clamp01((g - 0.5f) * profile.contrast + 0.5f);
-    b = Clamp01((b - 0.5f) * profile.contrast + 0.5f);
+    const float cameraContrast = 1.0f + (profile.contrast - 1.0f) * 1.22f;
+    r = Clamp01((r - 0.5f) * cameraContrast + 0.5f);
+    g = Clamp01((g - 0.5f) * cameraContrast + 0.5f);
+    b = Clamp01((b - 0.5f) * cameraContrast + 0.5f);
 
     float luma = 0.299f * r + 0.587f * g + 0.114f * b;
-    r = Clamp01(luma + (r - luma) * profile.saturation);
-    g = Clamp01(luma + (g - luma) * profile.saturation);
-    b = Clamp01(luma + (b - luma) * profile.saturation);
+    const float cameraSaturation = 1.0f + (profile.saturation - 1.0f) * 1.28f;
+    r = Clamp01(luma + (r - luma) * cameraSaturation);
+    g = Clamp01(luma + (g - luma) * cameraSaturation);
+    b = Clamp01(luma + (b - luma) * cameraSaturation);
 
     // 5b. Camera-engine response stage.
     // These are independent response families, not UI presets: each family
@@ -531,9 +534,21 @@ inline void ProcessPixel(
                         break;
                 }
 
-                const float raw_cr = g_cr * cr_weight;
-                const float raw_cg = g_cg * cg_weight;
-                const float raw_cb = g_cb * cb_weight;
+                float raw_cr = g_cr * cr_weight;
+                float raw_cg = g_cg * cg_weight;
+                float raw_cb = g_cb * cb_weight;
+                if (payload.blend_grain_source) {
+                    // Source-colour-aware chroma: bias grain channel energy toward
+                    // colours actually present in the source frame, without tinting
+                    // the image globally.
+                    const float srcLum = 0.299f*in_r + 0.587f*in_g + 0.114f*in_b;
+                    const float sr = std::max(0.0f, in_r-srcLum) * 1.8f;
+                    const float sg = std::max(0.0f, in_g-srcLum) * 1.8f;
+                    const float sb = std::max(0.0f, in_b-srcLum) * 1.8f;
+                    raw_cr *= 0.65f + sr;
+                    raw_cg *= 0.65f + sg;
+                    raw_cb *= 0.65f + sb;
+                }
 
                 // Orthogonalize against luminance so chromatic grain has zero luma shift and never tints the image
                 const float chroma_luma = 0.299f * raw_cr + 0.587f * raw_cg + 0.114f * raw_cb;
@@ -609,13 +624,18 @@ inline void ProcessPixel(
             r = r*(1.0f-k) + yy*k; g = g*(1.0f-k) + yy*k; b = b*(1.0f-k) + yy*k;
         }
         if (payload.noise_reduction > 0.0f) {
+            // A per-pixel edge-safe approximation: reduce chroma speckle first,
+            // then gently compress very small channel differences without washing
+            // the whole image to monochrome.
             const float yy = 0.2126f*r + 0.7152f*g + 0.0722f*b;
-            const float k = Clamp01(payload.noise_reduction*0.35f);
-            r = r*(1.0f-k) + yy*k; g = g*(1.0f-k) + yy*k; b = b*(1.0f-k) + yy*k;
+            const float k = Clamp01(payload.noise_reduction) * 0.22f;
+            const float dr = r-yy, dg = g-yy, db = b-yy;
+            r = yy + dr*(1.0f-k); g = yy + dg*(1.0f-k); b = yy + db*(1.0f-k);
         }
         if (payload.sharpen > 0.0f) {
             const float yy = 0.2126f*r + 0.7152f*g + 0.0722f*b;
-            const float k = payload.sharpen * 0.20f;
+            const float radiusScale = 0.65f + Clamp01((payload.sharpen_radius-1.0f)/4.0f)*0.9f;
+            const float k = payload.sharpen * 0.42f * radiusScale;
             r = yy + (r-yy)*(1.0f+k); g = yy + (g-yy)*(1.0f+k); b = yy + (b-yy)*(1.0f+k);
         }
         // HSL mixer: hue-family masks are smooth so adjacent colors transition naturally.
@@ -646,21 +666,35 @@ inline void ProcessPixel(
                 r=yy+(r-yy)*sm+dl/100.0f; g=yy+(g-yy)*sm+dl/100.0f; b=yy+(b-yy)*sm+dl/100.0f;
             }
         }
-        // Parametric RGB curves: master curve changes tone response; per-channel curves alter channel gain.
+        // Parametric tone-curve approximation. The master control bends the
+        // tonal range (rather than adding a flat lift); RGB controls bend each
+        // channel independently. A custom AE-style spline editor would require
+        // a dedicated custom UI/arbitrary-data parameter.
         {
-            const float lift=payload.curve_rgb*0.12f;
-            const float gamma=std::max(0.25f,1.0f-payload.curve_rgb*0.65f);
-            r=std::pow(Clamp01(r+lift),1.0f/gamma)*(1.0f+payload.curve_r*0.35f);
-            g=std::pow(Clamp01(g+lift),1.0f/gamma)*(1.0f+payload.curve_g*0.35f);
-            b=std::pow(Clamp01(b+lift),1.0f/gamma)*(1.0f+payload.curve_b*0.35f);
+            auto applyCurve = [](float x, float master, float channel) {
+                x = Clamp01(x);
+                const float m = std::max(-1.0f, std::min(1.0f, master));
+                const float c = std::max(-1.0f, std::min(1.0f, channel));
+                const float bend = x * (1.0f - x);
+                x += m * bend * 2.25f;
+                x += c * bend * 2.0f;
+                return Clamp01(x);
+            };
+            r = applyCurve(r, payload.curve_rgb, payload.curve_r);
+            g = applyCurve(g, payload.curve_rgb, payload.curve_g);
+            b = applyCurve(b, payload.curve_rgb, payload.curve_b);
         }
         // Split toning / three-way color grading, weighted by luminance region.
         {
             const float lum=0.2126f*r+0.7152f*g+0.0722f*b;
             const float sw=Clamp01((0.55f-lum)/0.55f), hw=Clamp01((lum-0.45f)/0.55f);
             const float mw=Clamp01(1.0f-std::fabs(lum-0.5f)*2.0f);
-            const float gh=(payload.shadow_hue*sw+payload.mid_hue*mw+payload.highlight_hue*hw)*0.01745329252f;
-            const float gs=(payload.shadow_sat*sw+payload.mid_sat*mw+payload.highlight_sat*hw)*0.006f;
+            // Balance shifts the split-tone weighting between shadows and highlights.
+            const float bal = payload.grade_balance;
+            const float shadowWeight = Clamp01(sw + bal * 0.35f * mw);
+            const float highlightWeight = Clamp01(hw - bal * 0.35f * mw);
+            const float gh=(payload.shadow_hue*shadowWeight+payload.mid_hue*mw+payload.highlight_hue*highlightWeight)*0.01745329252f;
+            const float gs=(payload.shadow_sat*shadowWeight+payload.mid_sat*mw+payload.highlight_sat*highlightWeight)*0.006f;
             const float Y=0.2126f*r+0.7152f*g+0.0722f*b, U=(b-Y)*0.565f, V=(r-Y)*0.713f;
             const float u2=U*std::cos(gh)-V*std::sin(gh), v2=U*std::sin(gh)+V*std::cos(gh);
             r=Y+v2/0.713f; b=Y+u2/0.565f; g=(Y-0.2126f*r-0.0722f*b)/0.7152f;
@@ -670,11 +704,21 @@ inline void ProcessPixel(
     }
 
     // 9. Blend with Original
-    if (payload.blend_original > 0.0001f) {
-        float mix_orig = Clamp01(payload.blend_original);
-        r = r * (1.0f - mix_orig) + in_r * mix_orig;
-        g = g * (1.0f - mix_orig) + in_g * mix_orig;
-        b = b * (1.0f - mix_orig) + in_b * mix_orig;
+    if (std::fabs(payload.blend_original) > 0.0001f) {
+        // Positive values blend back toward the untreated source. Negative values
+        // extrapolate away from the source to intensify the camera rendering.
+        const float mix = std::max(-1.0f, std::min(1.0f, payload.blend_original));
+        if (mix >= 0.0f) {
+            r = r * (1.0f - mix) + in_r * mix;
+            g = g * (1.0f - mix) + in_g * mix;
+            b = b * (1.0f - mix) + in_b * mix;
+        } else {
+            const float boost = -mix;
+            r += (r - in_r) * boost;
+            g += (g - in_g) * boost;
+            b += (b - in_b) * boost;
+        }
+        r = Clamp01(r); g = Clamp01(g); b = Clamp01(b);
     }
 
     out_r = r;
