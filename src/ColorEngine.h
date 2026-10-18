@@ -303,10 +303,12 @@ inline void ProcessPixel(
     b = Clamp01((b - blk) / (wht - blk));
 
     if (profile.is_film) {
-        // Photochemical film shoulder/toe response
-        r = r / (r + profile.highlight_rolloff) * (1.0f + profile.highlight_rolloff);
-        g = g / (g + profile.highlight_rolloff) * (1.0f + profile.highlight_rolloff);
-        b = b / (b + profile.highlight_rolloff) * (1.0f + profile.highlight_rolloff);
+        // Gentle negative-film shoulder. The former r/(r+rolloff)*(1+rolloff)
+        // curve pushed midtones close to white (especially CPM35); this rational
+        // shoulder compresses highlights without creating a global exposure lift.
+        r = r / (1.0f + profile.highlight_rolloff * r);
+        g = g / (1.0f + profile.highlight_rolloff * g);
+        b = b / (1.0f + profile.highlight_rolloff * b);
     } else if (profile.is_pureview) {
         // PureView oversampled highlight retention
         r = std::pow(Clamp01(r), 0.96f);
@@ -346,27 +348,27 @@ inline void ProcessPixel(
         float target_y = y;
         float mix = 0.0f;
         switch (profile.id) {
-            case 1: // CPM35: disposable negative, lifted toe and warm shoulder
-                target_y = y * (0.91f + 0.18f * (1.0f - y));
-                mix = 0.42f; r *= 1.025f; b *= 0.965f; break;
-            case 2: // Classic U: gentler contrast and softer highlight knee
+            case 1: // CPM35: restrained warm disposable negative
+                target_y = y * (0.96f + 0.06f * (1.0f - y));
+                mix = 0.36f; r *= 1.045f; g *= 1.005f; b *= 0.925f; break;
+            case 2: // Classic U: soft, amber compact-film rendering
                 target_y = y > 0.68f ? 0.68f + 0.32f * (1.0f - std::exp(-(y - 0.68f) / 0.32f)) : y;
-                mix = 0.30f; break;
-            case 3: // IR: false-colour response, red channel drives luminance
+                mix = 0.30f; r *= 1.035f; b *= 0.945f; break;
+            case 3: // IR: strong false-colour response
                 target_y = 0.36f * r + 0.48f * g + 0.16f * b;
-                mix = 0.58f; r = 0.72f * r + 0.28f * (1.0f - b); b = 0.68f * b + 0.32f * r; break;
-            case 4: // FQS: hard direct-flash response
-                target_y = (y - 0.5f) * 1.20f + 0.5f;
-                mix = 0.24f; break;
-            case 5: // CCD R: early CCD saturation and clipped highlights
-                target_y = y > 0.82f ? 0.82f + (y - 0.82f) * 0.42f : y;
-                mix = 0.36f; r *= 1.025f; b *= 0.97f; break;
-            case 6: // FXN: cool, denser shadow response
-                target_y = y * (0.82f + 0.18f * y);
-                mix = 0.34f; b *= 1.035f; break;
-            case 7: // DHalf: filmic midtone compression
-                target_y = y / (0.88f + 0.24f * y);
-                mix = 0.38f; break;
+                mix = 0.58f; { const float old_r = r; r = 0.62f * r + 0.38f * (1.0f - b); b = 0.52f * b + 0.48f * old_r; g *= 1.04f; } break;
+            case 4: // FQS: punchy direct-flash response with warm highlights
+                target_y = (y - 0.5f) * 1.24f + 0.5f;
+                mix = 0.30f; r *= 1.055f; b *= 0.91f; break;
+            case 5: // CCD R: saturated early CCD with warm clipping
+                target_y = y > 0.78f ? 0.78f + (y - 0.78f) * 0.34f : y;
+                mix = 0.42f; r *= 1.055f; g *= 1.015f; b *= 0.91f; break;
+            case 6: // FXN: cooler, denser shadow response
+                target_y = y * (0.78f + 0.22f * y);
+                mix = 0.40f; r *= 0.94f; b *= 1.075f; break;
+            case 7: // DHalf: warm half-frame film with compressed midtones
+                target_y = y / (0.92f + 0.16f * y);
+                mix = 0.38f; r *= 1.04f; b *= 0.94f; break;
             default: {
                 // Twelve pocket-CCD references get distinct response knees.
                 const int k = profile.id - 8;
@@ -380,9 +382,15 @@ inline void ProcessPixel(
                     target_y = y + toe * (1.0f - y) * (1.0f - y);
                 }
                 mix = 0.18f + 0.035f * static_cast<float>(k % 6);
-                if ((k % 3) == 0) { r *= 1.018f; b *= 0.982f; }
-                else if ((k % 3) == 1) { r *= 0.985f; b *= 1.025f; }
-                else { g *= 1.012f; }
+                // Distinct but bounded white-balance signatures for each pocket camera.
+                switch (k % 6) {
+                    case 0: r *= 1.045f; b *= 0.925f; break; // warm
+                    case 1: r *= 0.935f; b *= 1.075f; break; // cool/cyan
+                    case 2: g *= 1.055f; r *= 0.965f; break; // green compact CCD
+                    case 3: r *= 1.065f; g *= 0.985f; b *= 0.925f; break; // red halation
+                    case 4: r *= 0.965f; g *= 1.015f; b *= 1.055f; break; // muted cool
+                    default: r *= 1.035f; g *= 1.025f; b *= 0.955f; break; // daylight
+                }
                 break;
             }
         }

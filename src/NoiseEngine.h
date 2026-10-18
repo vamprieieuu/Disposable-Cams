@@ -63,9 +63,16 @@ inline void SampleSensorAndGrainNoise(
     float& out_chroma_g,
     float& out_chroma_b)
 {
-    float safe_size = (grain_size < 0.25f) ? 0.25f : grain_size;
-    float px = u * static_cast<float>(width) / safe_size;
-    float py = v * static_cast<float>(height) / safe_size;
+    // The UI is expressed in film-gauge-style millimetres (8-64), not pixels.
+    // Convert it to a restrained screen-space grain cell size. The previous
+    // implementation used the raw UI value as pixels, creating obvious square
+    // colour blocks 8-80 px wide instead of photographic grain.
+    const float gauge = (grain_size < 8.0f) ? 8.0f : (grain_size > 64.0f ? 64.0f : grain_size);
+    const float safe_size = 0.65f + ((gauge - 8.0f) / 56.0f) * 3.35f;
+    const float pixel_x = u * static_cast<float>(width);
+    const float pixel_y = v * static_cast<float>(height);
+    const float px = pixel_x / safe_size;
+    const float py = pixel_y / safe_size;
 
     uint32_t frame_step = static_cast<uint32_t>(std::floor(time_sec * 24.0f * (temporal_speed > 0.0f ? temporal_speed : 0.0f) + 0.5f));
     uint32_t base_seed = Hash32(static_cast<uint32_t>(user_seed) * 2654435761U + frame_step * 2246822519U + 0x9E3779B9U);
@@ -73,9 +80,15 @@ inline void SampleSensorAndGrainNoise(
     float fine = ValueNoise2D(px, py, base_seed);
     float coarse = ValueNoise2D(px * 0.42f, py * 0.42f, base_seed ^ 0xA5A5A5A5U);
     float cluster = ValueNoise2D(px * 0.18f, py * 0.18f, base_seed ^ 0x5A5A5A5AU);
+    // Independent per-pixel sensor response prevents smooth interpolation cells
+    // from reading as square mosaics. A small share of fine stochastic texture
+    // keeps the grain photographic while the multi-scale component gives body.
+    const uint32_t ix = static_cast<uint32_t>(static_cast<int>(pixel_x));
+    const uint32_t iy = static_cast<uint32_t>(static_cast<int>(pixel_y));
+    const float stochastic = HashFloat(ix * 0x8DA6B343U ^ iy * 0xD8163841U ^ base_seed ^ 0xB5297A4DU) * 2.0f - 1.0f;
 
     float clump_mix = (clumping < 0.0f) ? 0.0f : (clumping > 1.0f ? 1.0f : clumping);
-    float g = fine * (1.0f - 0.55f * clump_mix) + coarse * (0.40f * clump_mix) + cluster * (0.25f * clump_mix);
+    float g = fine * (0.72f - 0.42f * clump_mix) + stochastic * 0.42f + coarse * (0.20f * clump_mix) + cluster * (0.12f * clump_mix);
 
     // Uncorrelated density gate so grain remains strictly zero-mean
     float dens = (density < 0.05f) ? 0.05f : (density > 1.0f ? 1.0f : density);

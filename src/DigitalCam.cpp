@@ -282,8 +282,8 @@ static PF_Err ParamsSetup(
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Grain Size (8mm - 68mm)",
-        8.0f, 68.0f, 8.0f, 68.0f, 24.0f,
+        "Grain Size (8mm - 64mm)",
+        8.0f, 64.0f, 8.0f, 64.0f, 24.0f,
         PF_Precision_HUNDREDTHS, 0, 0,
         PARAM_GRAIN_SIZE);
 
