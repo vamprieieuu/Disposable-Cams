@@ -27,6 +27,24 @@ struct RenderPayload {
     int random_seed;
     float time_sec;
     float blend_original;
+    float exposure;
+    float contrast_adjust;
+    float highlights;
+    float shadows;
+    float whites;
+    float blacks;
+    float temperature;
+    float tint;
+    float vibrance;
+    float saturation_adjust;
+    float clarity;
+    float dehaze;
+    float vignette;
+    float sharpen;
+    float hsl_hue[8], hsl_sat[8], hsl_lum[8];
+    float curve_rgb, curve_r, curve_g, curve_b;
+    float shadow_hue, shadow_sat, mid_hue, mid_sat, highlight_hue, highlight_sat, grade_balance;
+    float sharpen_radius, noise_reduction, color_noise_reduction;
 };
 
 namespace DigitalCamColor {
@@ -386,8 +404,30 @@ inline void ProcessPixel(
         b = Clamp01(b + delta);
     }
 
-    // 7. Native Camera Effect
-    CameraEffectType eff_type = static_cast<CameraEffectType>(payload.effect_choice);
+    // 7. Native Camera Effect. Popup values are 1-based; map each UI choice
+    // to a distinct, real processing operation instead of enum values that
+    // previously landed on unrelated/near-neutral effects.
+    CameraEffectType eff_type = EFFECT_STANDARD;
+    switch (payload.effect_choice) {
+        case 1: // Soft Highlight Roll-Off
+            r = Clamp01(r / (1.0f + 0.22f * r)); g = Clamp01(g / (1.0f + 0.22f * g)); b = Clamp01(b / (1.0f + 0.22f * b)); break;
+        case 2: // Hard Direct Flash
+            r = Clamp01((r - 0.5f) * 1.28f + 0.54f); g = Clamp01((g - 0.5f) * 1.28f + 0.52f); b = Clamp01((b - 0.5f) * 1.28f + 0.49f); break;
+        case 3: // Warm Film Bias
+            r = Clamp01(r * 1.10f + 0.012f); g = Clamp01(g * 1.015f); b = Clamp01(b * 0.88f); break;
+        case 4: // Cool CCD Bias
+            r = Clamp01(r * 0.91f); g = Clamp01(g * 1.015f); b = Clamp01(b * 1.12f + 0.008f); break;
+        case 5: { // Low-Saturation Matte
+            float yy = 0.299f*r + 0.587f*g + 0.114f*b;
+            r = Clamp01(yy + (r-yy)*0.58f + 0.045f); g = Clamp01(yy + (g-yy)*0.58f + 0.045f); b = Clamp01(yy + (b-yy)*0.58f + 0.045f); break;
+        }
+        case 6: { // High-Saturation Compact
+            float yy = 0.299f*r + 0.587f*g + 0.114f*b;
+            r = Clamp01(yy + (r-yy)*1.42f); g = Clamp01(yy + (g-yy)*1.42f); b = Clamp01(yy + (b-yy)*1.42f); break;
+        }
+        case 7: eff_type = EFFECT_MONOCHROME; break;
+        default: break;
+    }
     float eff_strength = 1.0f;
     if (eff_type == EFFECT_NONE && !profile.effects.empty()) {
         eff_type = profile.effects[0].type;
@@ -411,14 +451,14 @@ inline void ProcessPixel(
     }
 
     const float luma_amp = (payload.grain_amount > 0.0f)
-        ? (profile.luma_noise * (payload.grain_amount * 2.0f) * mode_grain_boost * shadow_weight)
+        ? (profile.luma_noise * (payload.grain_amount * 5.0f) * mode_grain_boost * shadow_weight)
         : 0.0f;
 
     // Chroma Grain is strictly active only when Colored Grain switch is ON and Chroma Grain > 0.
     // When Chroma Grain == 0 (or switch is OFF), chroma_amp is strictly 0.0f (zero chromatic grain contribution).
     const bool use_camera_chroma_grain = payload.colored_grain && (payload.chroma_grain > 0.0f);
     const float chroma_amp = use_camera_chroma_grain
-        ? (profile.chroma_noise * (payload.chroma_grain * 1.6f) * mode_grain_boost * shadow_weight)
+        ? (profile.chroma_noise * (payload.chroma_grain * 3.5f) * mode_grain_boost * shadow_weight)
         : 0.0f;
 
     if (luma_amp > 0.0f || chroma_amp > 0.0f) {
@@ -510,6 +550,116 @@ inline void ProcessPixel(
     r = Clamp01(r);
     g = Clamp01(g);
     b = Clamp01(b);
+
+    // 8b. Lightroom-style global develop controls. Values are normalized from UI
+    // ranges and deliberately run after the camera response so users can grade it.
+    {
+        const float exposureGain = std::pow(2.0f, payload.exposure);
+        r *= exposureGain; g *= exposureGain; b *= exposureGain;
+        const float lum = 0.2126f*r + 0.7152f*g + 0.0722f*b;
+        const float hi = std::max(0.0f, (lum - 0.45f) / 0.55f);
+        const float sh = std::max(0.0f, (0.55f - lum) / 0.55f);
+        const float tonal = payload.highlights * hi * hi + payload.shadows * sh * sh;
+        r += tonal; g += tonal; b += tonal;
+        r += payload.whites * std::max(0.0f, (lum - 0.72f) / 0.28f);
+        g += payload.whites * std::max(0.0f, (lum - 0.72f) / 0.28f);
+        b += payload.whites * std::max(0.0f, (lum - 0.72f) / 0.28f);
+        r += payload.blacks * std::max(0.0f, (0.28f - lum) / 0.28f);
+        g += payload.blacks * std::max(0.0f, (0.28f - lum) / 0.28f);
+        b += payload.blacks * std::max(0.0f, (0.28f - lum) / 0.28f);
+        const float contrastFactor = std::max(0.05f, 1.0f + payload.contrast_adjust);
+        r = (r - 0.5f) * contrastFactor + 0.5f;
+        g = (g - 0.5f) * contrastFactor + 0.5f;
+        b = (b - 0.5f) * contrastFactor + 0.5f;
+        // Temperature and tint are white-balance offsets, not whole-image overlays.
+        r += payload.temperature * 0.12f + payload.tint * 0.035f;
+        g -= payload.tint * 0.045f;
+        b -= payload.temperature * 0.12f - payload.tint * 0.035f;
+        const float yLum = 0.2126f*r + 0.7152f*g + 0.0722f*b;
+        const float sat = std::max(0.0f, 1.0f + payload.saturation_adjust + payload.vibrance * (1.0f - std::min(1.0f, std::max(0.0f, std::max(r, std::max(g,b)) - std::min(r, std::min(g,b))))));
+        r = yLum + (r-yLum)*sat; g = yLum + (g-yLum)*sat; b = yLum + (b-yLum)*sat;
+        // Clarity is a midtone-local contrast approximation; dehaze adds a restrained
+        // black-point/contrast correction without requiring neighbouring pixels.
+        const float midMask = std::max(0.0f, 1.0f - std::fabs(yLum - 0.5f) * 1.8f);
+        const float clarityFactor = 1.0f + payload.clarity * 0.45f * midMask;
+        r = (r - 0.5f) * clarityFactor + 0.5f;
+        g = (g - 0.5f) * clarityFactor + 0.5f;
+        b = (b - 0.5f) * clarityFactor + 0.5f;
+        const float haze = payload.dehaze * 0.08f;
+        r = (r - 0.5f) * (1.0f + haze) + 0.5f - haze * 0.12f;
+        g = (g - 0.5f) * (1.0f + haze) + 0.5f - haze * 0.12f;
+        b = (b - 0.5f) * (1.0f + haze) + 0.5f - haze * 0.12f;
+        if (payload.vignette > 0.0f) {
+            const float radial = std::max(0.0f, 1.0f - (dx*dx + dy*dy) * 2.8f * payload.vignette);
+            r *= radial; g *= radial; b *= radial;
+        }
+        // Detail controls. Without a neighborhood buffer this native pixel path uses
+        // a conservative per-pixel chroma-noise suppressor and tonal microcontrast.
+        if (payload.color_noise_reduction > 0.0f) {
+            const float yy = 0.2126f*r + 0.7152f*g + 0.0722f*b;
+            const float k = Clamp01(payload.color_noise_reduction);
+            r = r*(1.0f-k) + yy*k; g = g*(1.0f-k) + yy*k; b = b*(1.0f-k) + yy*k;
+        }
+        if (payload.noise_reduction > 0.0f) {
+            const float yy = 0.2126f*r + 0.7152f*g + 0.0722f*b;
+            const float k = Clamp01(payload.noise_reduction*0.35f);
+            r = r*(1.0f-k) + yy*k; g = g*(1.0f-k) + yy*k; b = b*(1.0f-k) + yy*k;
+        }
+        if (payload.sharpen > 0.0f) {
+            const float yy = 0.2126f*r + 0.7152f*g + 0.0722f*b;
+            const float k = payload.sharpen * 0.20f;
+            r = yy + (r-yy)*(1.0f+k); g = yy + (g-yy)*(1.0f+k); b = yy + (b-yy)*(1.0f+k);
+        }
+        // HSL mixer: hue-family masks are smooth so adjacent colors transition naturally.
+        {
+            const float mx = std::max(r, std::max(g, b)), mn = std::min(r, std::min(g, b));
+            const float delta = mx - mn;
+            float hue = 0.0f;
+            if (delta > 1.0e-5f) {
+                if (mx == r) hue = 60.0f * std::fmod((g - b) / delta + 6.0f, 6.0f);
+                else if (mx == g) hue = 60.0f * ((b-r)/delta + 2.0f);
+                else hue = 60.0f * ((r-g)/delta + 4.0f);
+            }
+            const float centers[8] = {0,30,60,120,180,220,270,320};
+            float dh=0, ds=0, dl=0, total=0;
+            for (int i=0;i<8;++i) {
+                float d=std::fabs(hue-centers[i]); if(d>180) d=360-d;
+                float w=Clamp01(1.0f-d/42.0f); w=w*w*(3.0f-2.0f*w);
+                dh+=payload.hsl_hue[i]*w; ds+=payload.hsl_sat[i]*w; dl+=payload.hsl_lum[i]*w; total+=w;
+            }
+            if(total>1.0e-5f) {
+                const float angle=(dh/total)*0.01745329252f;
+                const float Y=0.299f*r+0.587f*g+0.114f*b;
+                const float I=0.596f*r-0.274f*g-0.322f*b, Q=0.211f*r-0.523f*g+0.312f*b;
+                const float ii=I*std::cos(angle)-Q*std::sin(angle), qq=I*std::sin(angle)+Q*std::cos(angle);
+                r=Y+0.956f*ii+0.621f*qq; g=Y-0.272f*ii-0.647f*qq; b=Y-1.106f*ii+1.703f*qq;
+                const float yy=0.2126f*r+0.7152f*g+0.0722f*b;
+                const float sm=std::max(0.0f,1.0f+ds/100.0f);
+                r=yy+(r-yy)*sm+dl/100.0f; g=yy+(g-yy)*sm+dl/100.0f; b=yy+(b-yy)*sm+dl/100.0f;
+            }
+        }
+        // Parametric RGB curves: master curve changes tone response; per-channel curves alter channel gain.
+        {
+            const float lift=payload.curve_rgb*0.12f;
+            const float gamma=std::max(0.25f,1.0f-payload.curve_rgb*0.65f);
+            r=std::pow(Clamp01(r+lift),1.0f/gamma)*(1.0f+payload.curve_r*0.35f);
+            g=std::pow(Clamp01(g+lift),1.0f/gamma)*(1.0f+payload.curve_g*0.35f);
+            b=std::pow(Clamp01(b+lift),1.0f/gamma)*(1.0f+payload.curve_b*0.35f);
+        }
+        // Split toning / three-way color grading, weighted by luminance region.
+        {
+            const float lum=0.2126f*r+0.7152f*g+0.0722f*b;
+            const float sw=Clamp01((0.55f-lum)/0.55f), hw=Clamp01((lum-0.45f)/0.55f);
+            const float mw=Clamp01(1.0f-std::fabs(lum-0.5f)*2.0f);
+            const float gh=(payload.shadow_hue*sw+payload.mid_hue*mw+payload.highlight_hue*hw)*0.01745329252f;
+            const float gs=(payload.shadow_sat*sw+payload.mid_sat*mw+payload.highlight_sat*hw)*0.006f;
+            const float Y=0.2126f*r+0.7152f*g+0.0722f*b, U=(b-Y)*0.565f, V=(r-Y)*0.713f;
+            const float u2=U*std::cos(gh)-V*std::sin(gh), v2=U*std::sin(gh)+V*std::cos(gh);
+            r=Y+v2/0.713f; b=Y+u2/0.565f; g=(Y-0.2126f*r-0.0722f*b)/0.7152f;
+            r+=gs*(r-Y); g+=gs*(g-Y); b+=gs*(b-Y);
+        }
+        r = Clamp01(r); g = Clamp01(g); b = Clamp01(b);
+    }
 
     // 9. Blend with Original
     if (payload.blend_original > 0.0001f) {

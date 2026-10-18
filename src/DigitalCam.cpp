@@ -191,6 +191,54 @@ static PF_Err GlobalSetup(
         STAGE_VERSION,
         BUILD_VERSION);
 
+
+    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Color Mixer (HSL)", PARAM_HSL_TOPIC_START);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_RED);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_RED);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_RED);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_ORANGE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_ORANGE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Orange Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_ORANGE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_YELLOW);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_YELLOW);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Yellow Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_YELLOW);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_GREEN);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_GREEN);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_GREEN);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_AQUA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_AQUA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Aqua Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_AQUA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_BLUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_BLUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_BLUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_PURPLE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_PURPLE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Purple Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_PURPLE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Hue", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_HUE_MAGENTA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_SAT_MAGENTA);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Magenta Luminance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f, PF_Precision_TENTHS, 0, 0, PARAM_LUM_MAGENTA);
+    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_HSL_TOPIC_END);
+    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Tone Curves", PARAM_CURVE_TOPIC_START);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Master Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_RGB);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Red Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_RED);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Green Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_GREEN);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Blue Curve", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_CURVE_BLUE);
+    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_CURVE_TOPIC_END);
+    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Color Grading", PARAM_GRADE_TOPIC_START);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Shadow Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHADOW_HUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Shadow Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHADOW_SAT);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Midtone Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_MID_HUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Midtone Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_MID_SAT);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Highlight Hue", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_HIGHLIGHT_HUE);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Highlight Saturation", -100, 100, -100, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_HIGHLIGHT_SAT);
+    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_GRADE_TOPIC_END);
+    AEFX_CLR_STRUCT(def); def.flags = PF_ParamFlag_START_COLLAPSED; PF_ADD_TOPIC("Detail & Noise Reduction", PARAM_DETAIL_TOPIC_START);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Sharpening", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_SHARPENING);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Sharpen Radius", 1, 5, 1, 5, 1, PF_Precision_TENTHS, 0, 0, PARAM_SHARPEN_RADIUS);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Luminance Noise Reduction", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_NOISE_REDUCTION);
+    AEFX_CLR_STRUCT(def); PF_ADD_FLOAT_SLIDERX("Color Noise Reduction", 0, 100, 0, 100, 0, PF_Precision_TENTHS, 0, 0, PARAM_COLOR_NOISE_REDUCTION);
+    AEFX_CLR_STRUCT(def); PF_END_TOPIC(PARAM_DETAIL_TOPIC_END);
+
     out_data->num_params = DIGITALCAM_NUM_PARAMS;
 
     out_data->out_flags =
@@ -226,18 +274,18 @@ static PF_Err ParamsSetup(
         "CCD R — CCD Color Response|"
         "FXN — Flash X-Negative|"
         "DHalf — Half-Frame Film|"
-        "Pocket CCD 01 — IMG_3792|"
-        "Pocket CCD 02 — IMG_3793|"
-        "Pocket CCD 03 — IMG_3794|"
-        "Pocket CCD 04 — IMG_3795 DNG|"
-        "Pocket CCD 05 — IMG_3797|"
-        "Pocket CCD 06 — IMG_3798|"
-        "Pocket CCD 07 — IMG_3799|"
-        "Pocket CCD 08 — IMG_3802 DNG|"
-        "Pocket CCD 09 — IMG_3804|"
-        "Pocket CCD 10 — IMG_3808|"
-        "Pocket CCD 11 — IMG_3809 DNG|"
-        "Pocket CCD 12 — IMG_3813",
+        "Amber Flash 3792|"
+        "Cool Snapshot 3793|"
+        "Soft Summer 3794|"
+        "Deep Shadow 3795|"
+        "Warm Compact 3797|"
+        "Green Cast 3798|"
+        "Hard Flash 3799|"
+        "Muted Film 3802|"
+        "Cyan Night 3804|"
+        "Bright CCD 3808|"
+        "Matte Daylight 3809|"
+        "Red Halation 3813",
         PARAM_CAMERA_MODEL);
 
     AEFX_CLR_STRUCT(def);
@@ -285,8 +333,8 @@ static PF_Err ParamsSetup(
 
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(
-        "Grain Scale",
-        0.5f, 4.0f, 0.5f, 4.0f, 1.0f,
+        "Grain Size (8mm - 68mm)",
+        8.0f, 68.0f, 8.0f, 68.0f, 24.0f,
         PF_Precision_HUNDREDTHS, 0, 0,
         PARAM_GRAIN_SIZE);
 
@@ -356,6 +404,84 @@ static PF_Err ParamsSetup(
         0.0f, 100.0f, 0.0f, 100.0f, 0.0f,
         PF_Precision_TENTHS, 0, 0,
         PARAM_BLEND_ORIGINAL);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Exposure", -5.0f, 5.0f, -5.0f, 5.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_EXPOSURE);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Contrast", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_CONTRAST);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Highlights", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_HIGHLIGHTS);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Shadows", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_SHADOWS);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Whites", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_WHITES);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Blacks", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_BLACKS);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Temperature", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_TEMPERATURE);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Tint", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_TINT);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Vibrance", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_VIBRANCE);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Saturation", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_SATURATION);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Clarity", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_CLARITY);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Dehaze", -100.0f, 100.0f, -100.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_DEHAZE);
+
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(
+        "Develop Vignette", 0.0f, 100.0f, 0.0f, 100.0f, 0.0f,
+        PF_Precision_TENTHS, 0, 0,
+        PARAM_VIGNETTE);
 
     out_data->num_params = DIGITALCAM_NUM_PARAMS;
     return err;
@@ -456,6 +582,9 @@ static PF_Err SmartRender(
     if (!err && input_worldP && output_worldP && input_worldP->data && output_worldP->data) {
         PF_ParamDef p_model, p_effect, p_mode, p_flash, p_optics;
         PF_ParamDef p_g_amt, p_g_size, p_g_clump, p_c_grain, p_g_chroma, p_m_col, p_g_cont, p_g_dens, p_t_speed, p_seed, p_blend;
+        PF_ParamDef p_develop[13];
+        const int develop_ids[13] = { PARAM_EXPOSURE, PARAM_CONTRAST, PARAM_HIGHLIGHTS, PARAM_SHADOWS, PARAM_WHITES, PARAM_BLACKS, PARAM_TEMPERATURE, PARAM_TINT, PARAM_VIBRANCE, PARAM_SATURATION, PARAM_CLARITY, PARAM_DEHAZE, PARAM_VIGNETTE };
+        for (int i = 0; i < 13; ++i) AEFX_CLR_STRUCT(p_develop[i]);
 
         AEFX_CLR_STRUCT(p_model);
         AEFX_CLR_STRUCT(p_effect);
@@ -490,6 +619,10 @@ static PF_Err SmartRender(
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_TEMPORAL_SPEED, in_data->current_time, in_data->time_step, in_data->time_scale, &p_t_speed));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_RANDOM_SEED, in_data->current_time, in_data->time_step, in_data->time_scale, &p_seed));
         ERR(PF_CHECKOUT_PARAM(in_data, PARAM_BLEND_ORIGINAL, in_data->current_time, in_data->time_step, in_data->time_scale, &p_blend));
+        for (int i = 0; i < 13; ++i) ERR(PF_CHECKOUT_PARAM(in_data, develop_ids[i], in_data->current_time, in_data->time_step, in_data->time_scale, &p_develop[i]));
+        const int extra_ids[38] = {PARAM_HUE_RED, PARAM_SAT_RED, PARAM_LUM_RED, PARAM_HUE_ORANGE, PARAM_SAT_ORANGE, PARAM_LUM_ORANGE, PARAM_HUE_YELLOW, PARAM_SAT_YELLOW, PARAM_LUM_YELLOW, PARAM_HUE_GREEN, PARAM_SAT_GREEN, PARAM_LUM_GREEN, PARAM_HUE_AQUA, PARAM_SAT_AQUA, PARAM_LUM_AQUA, PARAM_HUE_BLUE, PARAM_SAT_BLUE, PARAM_LUM_BLUE, PARAM_HUE_PURPLE, PARAM_SAT_PURPLE, PARAM_LUM_PURPLE, PARAM_HUE_MAGENTA, PARAM_SAT_MAGENTA, PARAM_LUM_MAGENTA, PARAM_CURVE_RGB, PARAM_CURVE_RED, PARAM_CURVE_GREEN, PARAM_CURVE_BLUE, PARAM_SHADOW_HUE, PARAM_SHADOW_SAT, PARAM_MID_HUE, PARAM_MID_SAT, PARAM_HIGHLIGHT_HUE, PARAM_HIGHLIGHT_SAT, PARAM_SHARPENING, PARAM_SHARPEN_RADIUS, PARAM_NOISE_REDUCTION, PARAM_COLOR_NOISE_REDUCTION};
+        PF_ParamDef p_extra[38]; for (int i=0;i<38;++i) AEFX_CLR_STRUCT(p_extra[i]);
+        for (int i=0;i<38;++i) ERR(PF_CHECKOUT_PARAM(in_data, extra_ids[i], in_data->current_time, in_data->time_step, in_data->time_scale, &p_extra[i]));
 
         if (!err) {
             RenderPayload payload{};
@@ -514,6 +647,41 @@ static PF_Err SmartRender(
             payload.manual_b       = static_cast<float>(p_m_col.u.cd.value.blue) * (1.0f / 255.0f);
             payload.random_seed    = static_cast<int>(p_seed.u.sd.value);
             payload.blend_original = static_cast<float>(p_blend.u.fs_d.value) * 0.01f;
+            payload.exposure = static_cast<float>(p_develop[0].u.fs_d.value);
+            payload.contrast_adjust = static_cast<float>(p_develop[1].u.fs_d.value) * 0.01f;
+            payload.highlights = static_cast<float>(p_develop[2].u.fs_d.value) * 0.0025f;
+            payload.shadows = static_cast<float>(p_develop[3].u.fs_d.value) * 0.0025f;
+            payload.whites = static_cast<float>(p_develop[4].u.fs_d.value) * 0.0025f;
+            payload.blacks = static_cast<float>(p_develop[5].u.fs_d.value) * 0.0025f;
+            payload.temperature = static_cast<float>(p_develop[6].u.fs_d.value) * 0.01f;
+            payload.tint = static_cast<float>(p_develop[7].u.fs_d.value) * 0.01f;
+            payload.vibrance = static_cast<float>(p_develop[8].u.fs_d.value) * 0.01f;
+            payload.saturation_adjust = static_cast<float>(p_develop[9].u.fs_d.value) * 0.01f;
+            payload.clarity = static_cast<float>(p_develop[10].u.fs_d.value) * 0.01f;
+            payload.dehaze = static_cast<float>(p_develop[11].u.fs_d.value) * 0.01f;
+            payload.vignette = static_cast<float>(p_develop[12].u.fs_d.value) * 0.01f;
+            payload.hsl_hue[0] = static_cast<float>(p_extra[0].u.fs_d.value); payload.hsl_sat[0] = static_cast<float>(p_extra[1].u.fs_d.value); payload.hsl_lum[0] = static_cast<float>(p_extra[2].u.fs_d.value);
+            payload.hsl_hue[1] = static_cast<float>(p_extra[3].u.fs_d.value); payload.hsl_sat[1] = static_cast<float>(p_extra[4].u.fs_d.value); payload.hsl_lum[1] = static_cast<float>(p_extra[5].u.fs_d.value);
+            payload.hsl_hue[2] = static_cast<float>(p_extra[6].u.fs_d.value); payload.hsl_sat[2] = static_cast<float>(p_extra[7].u.fs_d.value); payload.hsl_lum[2] = static_cast<float>(p_extra[8].u.fs_d.value);
+            payload.hsl_hue[3] = static_cast<float>(p_extra[9].u.fs_d.value); payload.hsl_sat[3] = static_cast<float>(p_extra[10].u.fs_d.value); payload.hsl_lum[3] = static_cast<float>(p_extra[11].u.fs_d.value);
+            payload.hsl_hue[4] = static_cast<float>(p_extra[12].u.fs_d.value); payload.hsl_sat[4] = static_cast<float>(p_extra[13].u.fs_d.value); payload.hsl_lum[4] = static_cast<float>(p_extra[14].u.fs_d.value);
+            payload.hsl_hue[5] = static_cast<float>(p_extra[15].u.fs_d.value); payload.hsl_sat[5] = static_cast<float>(p_extra[16].u.fs_d.value); payload.hsl_lum[5] = static_cast<float>(p_extra[17].u.fs_d.value);
+            payload.hsl_hue[6] = static_cast<float>(p_extra[18].u.fs_d.value); payload.hsl_sat[6] = static_cast<float>(p_extra[19].u.fs_d.value); payload.hsl_lum[6] = static_cast<float>(p_extra[20].u.fs_d.value);
+            payload.hsl_hue[7] = static_cast<float>(p_extra[21].u.fs_d.value); payload.hsl_sat[7] = static_cast<float>(p_extra[22].u.fs_d.value); payload.hsl_lum[7] = static_cast<float>(p_extra[23].u.fs_d.value);
+            payload.curve_rgb = static_cast<float>(p_extra[24].u.fs_d.value) * 0.01f;
+            payload.curve_r = static_cast<float>(p_extra[25].u.fs_d.value) * 0.01f;
+            payload.curve_g = static_cast<float>(p_extra[26].u.fs_d.value) * 0.01f;
+            payload.curve_b = static_cast<float>(p_extra[27].u.fs_d.value) * 0.01f;
+            payload.shadow_hue = static_cast<float>(p_extra[28].u.fs_d.value);
+            payload.shadow_sat = static_cast<float>(p_extra[29].u.fs_d.value);
+            payload.mid_hue = static_cast<float>(p_extra[30].u.fs_d.value);
+            payload.mid_sat = static_cast<float>(p_extra[31].u.fs_d.value);
+            payload.highlight_hue = static_cast<float>(p_extra[32].u.fs_d.value);
+            payload.highlight_sat = static_cast<float>(p_extra[33].u.fs_d.value);
+            payload.sharpen = static_cast<float>(p_extra[34].u.fs_d.value) * 0.01f;
+            payload.sharpen_radius = static_cast<float>(p_extra[35].u.fs_d.value);
+            payload.noise_reduction = static_cast<float>(p_extra[36].u.fs_d.value) * 0.01f;
+            payload.color_noise_reduction = static_cast<float>(p_extra[37].u.fs_d.value) * 0.01f;
             payload.time_sec       = (in_data->time_scale > 0)
                 ? (static_cast<float>(in_data->current_time) / static_cast<float>(in_data->time_scale))
                 : 0.0f;
@@ -551,6 +719,7 @@ static PF_Err SmartRender(
         ERR2(PF_CHECKIN_PARAM(in_data, &p_t_speed));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_seed));
         ERR2(PF_CHECKIN_PARAM(in_data, &p_blend));
+        for (int i = 0; i < 13; ++i) ERR2(PF_CHECKIN_PARAM(in_data, &p_develop[i]));
     }
 
     ERR2(extra->cb->checkin_layer_pixels(in_data->effect_ref, PARAM_INPUT));
@@ -594,6 +763,19 @@ static PF_Err LegacyRender(
     payload.manual_b       = static_cast<float>(params[PARAM_MANUAL_COLOR]->u.cd.value.blue) * (1.0f / 255.0f);
     payload.random_seed    = static_cast<int>(params[PARAM_RANDOM_SEED]->u.sd.value);
     payload.blend_original = static_cast<float>(params[PARAM_BLEND_ORIGINAL]->u.fs_d.value) * 0.01f;
+    payload.exposure = static_cast<float>(params[PARAM_EXPOSURE]->u.fs_d.value);
+    payload.contrast_adjust = static_cast<float>(params[PARAM_CONTRAST]->u.fs_d.value) * 0.01f;
+    payload.highlights = static_cast<float>(params[PARAM_HIGHLIGHTS]->u.fs_d.value) * 0.0025f;
+    payload.shadows = static_cast<float>(params[PARAM_SHADOWS]->u.fs_d.value) * 0.0025f;
+    payload.whites = static_cast<float>(params[PARAM_WHITES]->u.fs_d.value) * 0.0025f;
+    payload.blacks = static_cast<float>(params[PARAM_BLACKS]->u.fs_d.value) * 0.0025f;
+    payload.temperature = static_cast<float>(params[PARAM_TEMPERATURE]->u.fs_d.value) * 0.01f;
+    payload.tint = static_cast<float>(params[PARAM_TINT]->u.fs_d.value) * 0.01f;
+    payload.vibrance = static_cast<float>(params[PARAM_VIBRANCE]->u.fs_d.value) * 0.01f;
+    payload.saturation_adjust = static_cast<float>(params[PARAM_SATURATION]->u.fs_d.value) * 0.01f;
+    payload.clarity = static_cast<float>(params[PARAM_CLARITY]->u.fs_d.value) * 0.01f;
+    payload.dehaze = static_cast<float>(params[PARAM_DEHAZE]->u.fs_d.value) * 0.01f;
+    payload.vignette = static_cast<float>(params[PARAM_VIGNETTE]->u.fs_d.value) * 0.01f;
     payload.time_sec       = (in_data->time_scale > 0)
         ? (static_cast<float>(in_data->current_time) / static_cast<float>(in_data->time_scale))
         : 0.0f;
